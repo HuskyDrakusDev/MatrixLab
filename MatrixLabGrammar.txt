@@ -1,0 +1,29 @@
+Matrix Lab Grammar
+
+command -> sys-command | user-identifier "=" expr
+          | user-identifier "=" dimensions | expr
+          
+sys-command -> "ls" | "clr" | "rm" user-identifier
+
+identifier -> reserved-identifier | user-identifier
+
+reserved-identifier -> "I" digit-seq | "Z" digit-seq
+
+user-identifier -> alpha-seq (excluding "Z", "I", "ls", "clr", "rm") 
+                  (and then some   more alphanumeric characters if needed)
+                  
+dimensions -> digit-seq "by" digit-seq | digit-seq "x" digit-seq | digit-seq digit-seq
+
+============Expressions=====================
+
+expr -> term [add-op term]
+
+term -> factor ["*" factor]
+
+factor -> "(" expr ")" | unary-op "(" expr ")" | identifier | digit-seq
+
+add-op -> "+" | "-"
+
+unary-op -> "det" | "rref" | "inv" | "trans"
+
+
