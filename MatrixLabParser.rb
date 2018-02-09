@@ -87,7 +87,7 @@ class MatrixLabParser
       if row.length == n
         for i in 0...row.length # iterate with i through the rows
           if integer? row[i]
-            row[i] = row[i].to_i # convert to numbers from strings
+            row[i].to_i # convert to numbers from strings
           else
             puts 'Error: Row entry contained non digit characters.'
             valid = false
@@ -208,13 +208,19 @@ class MatrixLabParser
         sysCommand = @tokens.shift # consume and store the command token
         if sysCommand == 'ls'
         	if end_token? @tokens.first
-	        	#TODO process ls command
+        	  # display all currently saved matrices
+        	  puts 'Currently Stored Matrices and Vectors:'
+            @matrices.each { |identifier, matrix|
+              puts "#{identifier} ="
+              disp_matrix matrix 
+              puts
+            }
         	else
         		puts 'Error: ls command does not accept arguments.'
         	end
         elsif sysCommand == 'clr'
         	if end_token? @tokens.first
-	        	#TODO process clr command
+	        	@matrices = {}
         	else
         		puts 'Error: clr command does not accept arguments.'
         	end
@@ -224,6 +230,11 @@ class MatrixLabParser
 	        		identifier = @tokens.shift # consume and store the user identifier
 			      	if end_token? @tokens.first
 		      			#TODO process rm command
+		      			if @matrices.key? identifier
+		      			  @matrices.delete identifier
+		      			else
+		      			  puts "Identifier #{identifier} is already available."
+		      			end
         			else
 		        		puts 'Error: rm command accepts only one argument.'
 		        	end
@@ -259,7 +270,7 @@ class MatrixLabParser
   								  for i in 0...m
   								    row = get_row n
   								    if not row.empty? 
-  								      matrix.concat row
+  								      matrix.push row
   								    else
   								      row_input_success = false
   								      break
@@ -285,7 +296,7 @@ class MatrixLabParser
 								  for i in 0...m
 								    row = get_row n
 								    if not row.empty? 
-								      matrix.concat row
+								      matrix.push row
 								    else
 								      row_input_success = false
 								      break
