@@ -2,7 +2,7 @@
 require_relative 'MatrixLabParser.rb'
 
 # current version
-version_num = '0.0.1'
+version_num = '0.0.2'
 
 # the symbol to display as a prompt
 prompt = '%'
@@ -24,7 +24,7 @@ end
 parser = MatrixLabParser.new
 
 # display welcome message
-puts 'Matrix Lab v#{version_num}'
+puts "Matrix Lab v#{version_num}"
 
 # main program loop
 while run
