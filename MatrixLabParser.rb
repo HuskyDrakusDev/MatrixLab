@@ -75,9 +75,39 @@ class MatrixLabParser
     end
   end
   
-  # Returns a new matrix after gathering user input
-  def get_matrix
+  # Returns a new matrix row after gathering user input
+  def get_row(n)
     
+    print '| '
+    row = gets.chomp
+    valid = true
+    
+    if row.length > 0
+      row = row.split
+      if row.length == n
+        for i in 0...row.length # iterate with i through the rows
+          if integer? row[i]
+            row[i] = row[i].to_i # convert to numbers from strings
+          else
+            puts 'Error: Row entry contained non digit characters.'
+            valid = false
+            break # break from the loop
+          end
+        end
+      else
+        puts "Error: Row entry must have #{} columns."
+        valid = false
+      end
+    else
+      puts 'Error: Row entry cannot be blank.'
+      valid = false
+    end
+    
+    if(valid)
+      return row
+    else
+      return []
+    end
   end
   
   
@@ -217,13 +247,27 @@ class MatrixLabParser
           if @tokens.length >= 3 # path to check for dimensions
             if positive_integer? @tokens.first 
               if @tokens[1] == 'by' or @tokens[1] == 'x'
-                m = @tokens.shift # consume and save the m dimension
+                m = @tokens.shift.to_i # consume and save the m dimension
                 @tokens.shift # consume the 'by' or 'x' character
                 if positive_integer? @tokens.first
                   # we must have an assignment command, with dimensions using a by or x
-                  n = @tokens.shift
+                  n = @tokens.shift.to_i
                   if end_token? @tokens.first
-										#TODO get user input                  
+										#TODO get user input 
+								    matrix = []
+								    row_input_success = true
+  								  for i in 0...m
+  								    row = get_row n
+  								    if not row.empty? 
+  								      matrix.concat row
+  								    else
+  								      row_input_success = false
+  								      break
+  								    end
+									  end  
+									  if row_input_success
+  									  @matrices[identifier] = matrix
+									  end
                   else
                   	puts 'Error: Too many arguments for dimensions.'
                   end
@@ -232,10 +276,24 @@ class MatrixLabParser
                 end
               elsif positive_integer? @tokens[1] 
                 # we must have an assignment command, with dimensions without the by or x
-                m = @tokens.shift
-                n = @tokens.shift
+                m = @tokens.shift.to_i
+                n = @tokens.shift.to_i
                 if end_token? @tokens.first
-									#TODO get user input                  
+									#TODO get user input   
+									matrix = []
+							    row_input_success = true
+								  for i in 0...m
+								    row = get_row n
+								    if not row.empty? 
+								      matrix.concat row
+								    else
+								      row_input_success = false
+								      break
+								    end
+								  end  
+								  if row_input_success
+									  @matrices[identifier] = matrix
+								  end               
                 else
                 	puts 'Error: Too many arguments for dimensions.'
                 end
