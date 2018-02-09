@@ -41,6 +41,10 @@ class MatrixLabParser
     return token == END_OF_INPUT_STRING
   end
   
+  def add_op?(token)
+  	return ADD_OP_STRINGS.include? token
+  end
+  
   def integer?(token)
     isInt = true
     if token.length > 0
@@ -262,6 +266,7 @@ class MatrixLabParser
 								if expr.is_a? 1.class 
 									# ensure current expression matches next term type
 									# TODO scalar addition can be appropriately handled here
+									expr += term # calculate the expression using addition
 								else
 									puts 'Error: Cannot add scalar to matrix.'
 									expr = nil
@@ -283,6 +288,7 @@ class MatrixLabParser
 								if expr.is_a? 1.class 
 									# ensure current expression matches next term type
 									# TODO scalar subtraction can be appropriately handled here
+									expr -= term # calculate the expression using subtraction
 								else
 									puts 'Error: Cannot subtract scalar from a matrix.'
 									expr = nil
@@ -304,7 +310,7 @@ class MatrixLabParser
   end
   
   def parse_term
-  	
+  	return @tokens.shift.to_i #TODO palceholder for parse term
   end
   
   def parse_factor
