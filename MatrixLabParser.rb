@@ -227,7 +227,7 @@ class MatrixLabParser
         end 
       else
         # case where just an expression was typed in
-        expr = parse_expr
+        expr = parse_expr #TODO expression but with extra garbage afterwards??
         puts ">> #{expr}"        
       end
     else
@@ -236,9 +236,79 @@ class MatrixLabParser
   end
   
   def parse_expr
-  	expr = [1]
-  	puts expr.class
-  	return [1] # TODO placeholder for parse_expr
+  	expr = parse_term # parse the first term into the expression
+  	if not expr.equal? nil
+  	  # make sure term parsed correctly
+			while add_op? @tokens.first
+			  op = @tokens.shift # consume and store operator token (+, -)
+			  if not end_token? @tokens.first
+			  	# make sure that there is a token to follow the add op
+			  	term = parse_term # parse the term following the operation
+			  	if not term.equal? nil
+			  		# if next term was parsed correctly
+			  		if op == '+'
+							# handle adding terms
+							if term.is_a? [].class
+								# handle matrix addition
+								if expr.is_a? [].class 
+									# ensure current expression matches next term type
+									# TODO matrix addition can be appropriately done here
+								else
+									puts 'Error: Cannot add matrix to scalar.'
+									expr = nil
+								end
+							else
+								# handle scalar addition
+								if expr.is_a? 1.class 
+									# ensure current expression matches next term type
+									# TODO scalar addition can be appropriately handled here
+								else
+									puts 'Error: Cannot add scalar to matrix.'
+									expr = nil
+								end
+							end
+						else # op == '-'
+							# handle subtracting terms
+							if term.is_a? [].class
+								# handle matrix subtraction
+								if expr.is_a? [].class 
+									# ensure current expression matches next term type
+									# TODO matrix subtraction can be appropriately done here
+								else
+									puts 'Error: Cannot subtract matrix from scalar.'
+									expr = nil
+								end
+							else
+								# handle scalar subtraction
+								if expr.is_a? 1.class 
+									# ensure current expression matches next term type
+									# TODO scalar subtraction can be appropriately handled here
+								else
+									puts 'Error: Cannot subtract scalar from a matrix.'
+									expr = nil
+								end
+							end
+						end
+			  	else
+			  		puts 'Error Parsing Term' #TODO necessary to print here?
+			  		expr = nil
+			  	end
+			  else 
+			  	puts 'Error: Expected a term to follow (+/-).'
+			  	expr = nil
+			  end
+			end
+  	end
+  	
+  	return expr
+  end
+  
+  def parse_term
+  	
+  end
+  
+  def parse_factor
+  	
   end
   
 end                           
