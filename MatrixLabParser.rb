@@ -2,7 +2,7 @@
 
 require 'set'
 
-# ================================ CONSTANTS =============================================
+# ================================ CONSTANTS ===========================================
 
 # the maximum dimension allowed for a matrix in the system
 MAX_DIMENSION = 100
@@ -31,11 +31,57 @@ class MatrixLabParser
     # hash to map identifiers to matrices    
     @matrices = {}
     
+    # array of tokens
     @tokens = []
   
   end
+  
+  # ============================== OPERATION METHODS ===================================
 
-  # ============================== PARSING HELPER METHODS ================================
+  # Performs matrix addition and returns the result  
+  def matrix_add(a, b)
+    # assumes valid input given, invalid stuff should be handled by parser methods
+    # a and b must have the same dimensions and have only integer values,
+    # or I guess floats could work
+    for i in 0...a.length
+      for j in 0...a[0].length
+        b[i][j] += a[i][j]
+      end
+    end
+    return b
+  end
+  
+  # Performs matrix subtraction and returns the result
+  def matrix_subtract(a, b)
+    # assumes valid input given, invalid stuff should be handled by parser methods
+    # a and b must have the same dimensions and have only integer values,
+    # or I guess floats could work
+    for i in 0...a.length
+      for j in 0...a[0].length
+        b[i][j] -= a[i][j]
+      end
+    end
+    return b
+  end
+
+  # Displays the given matrix to the standard out
+  def disp_matrix(m)
+    for i in 0...m.length
+      print '| '
+      for j in 0...m[0].length
+        print m[i][j] + ' '
+      end
+      puts '|'
+    end
+  end
+  
+  # Returns a new matrix after gathering user input
+  def get_matrix
+    
+  end
+  
+  
+  # ============================== PARSING HELPER METHODS ==============================
 
   def end_token?(token)
     return token == END_OF_INPUT_STRING
@@ -114,7 +160,7 @@ class MatrixLabParser
     return (reserved_identifier? token or user_identifier? token)
   end
 
-  # ============================== PARSE METHODS =========================================
+  # ============================== PARSE METHODS =======================================
 
   # note: shift on tokens returns next token, first on tokens looks at next token
   # by convention, of course, not enforced by language
@@ -257,6 +303,13 @@ class MatrixLabParser
 								if expr.is_a? [].class 
 									# ensure current expression matches next term type
 									# TODO matrix addition can be appropriately done here
+									if expr.length == term.length and expr[0].length == term[0].length
+									  # now that we are sure dimensions match, we can add term to expr
+									  expr = matrix_add expr, term
+									else
+									  puts 'Error: Cannot add matrices with mismatched dimensions.'
+									  expr = nil
+									end
 								else
 									puts 'Error: Cannot add matrix to scalar.'
 									expr = nil
@@ -265,7 +318,6 @@ class MatrixLabParser
 								# handle scalar addition
 								if expr.is_a? 1.class 
 									# ensure current expression matches next term type
-									# TODO scalar addition can be appropriately handled here
 									expr += term # calculate the expression using addition
 								else
 									puts 'Error: Cannot add scalar to matrix.'
@@ -279,6 +331,13 @@ class MatrixLabParser
 								if expr.is_a? [].class 
 									# ensure current expression matches next term type
 									# TODO matrix subtraction can be appropriately done here
+									if expr.length == term.length and expr[0].length == term[0].length
+									  # now that we are sure dimensions match, we can subtract term
+									  expr = matrix_subtract expr, term
+									else
+									  puts 'Error: Cannot add matrices with mismatched dimensions.'
+									  expr = nil
+									end
 								else
 									puts 'Error: Cannot subtract matrix from scalar.'
 									expr = nil
@@ -287,7 +346,6 @@ class MatrixLabParser
 								# handle scalar subtraction
 								if expr.is_a? 1.class 
 									# ensure current expression matches next term type
-									# TODO scalar subtraction can be appropriately handled here
 									expr -= term # calculate the expression using subtraction
 								else
 									puts 'Error: Cannot subtract scalar from a matrix.'
