@@ -142,6 +142,10 @@ class MatrixLabParser
   	return ADD_OP_STRINGS.include? token
   end
   
+  def unary_op?(token)
+  	return UNARY_OP_STRINGS.include? token
+  end
+  
   def integer?(token)
     isInt = true
     if token.length > 0
@@ -473,16 +477,19 @@ class MatrixLabParser
   					# make sure factor after operator was parsed correctly
   					if factor.is_a? [].class
   						if term.is_a? [].class
-  							# handle matrix multiplication
+  							# TODO handle matrix multiplication
+  							term = matrix_mult term, factor
   						else
-  							# handle scalar * matrix multiplication 
+  							# handle scalar * matrix multiplication (term is scalar)
+  							term = scalar_mult term, factor
   						end
   					else
   						if term.is_a? 1.class
   							# handle scalar * scalar multiplication
   							term *= factor
   						else
-  							# handle matrix * scalar multiplication
+  							# handle matrix * scalar multiplication (factor is scalar)
+  							term = scalar_mult factor, term
   						end
   					end
   				else
@@ -501,7 +508,39 @@ class MatrixLabParser
   end
   
   def parse_factor
-  	
+  	#TODO with tokenizer, maybe it should be improved so that we don't have to have
+  	# example: det ( A ) and instead can have det(A)
+  	factor = nil
+  	if not end_token? @tokens.first
+  		if @tokens.first == '('
+  			# we are in the expression in parentheses case
+  			@tokens.shift # consume the '(' token
+  			factor = parse_expr # parse the expression 
+  			if @tokens.first == ')'
+  				@tokens.shift # consume the ')' symbol
+  			else
+  				puts "Error: Expected symbol ')' to close expression."
+  				factor = nil
+  			end
+  		elsif unary_op? @tokens.first
+  			op = @tokens.shift # consume and store the unary operator token
+  			# TODO selection structure for unary ops
+  		elsif identifier? @tokens.first
+  			# TODO handle case where factor is just an identifier
+  		elsif integer? @tokens.first
+  			# in this case, the factor is just an integer number
+  			factor = @tokens.shift.to_i # consume the integer and store in factor
+  		else
+  			puts 'Error: Invalid syntax for factor.'
+  			factor = nil
+  		end
+  	else
+  		# TODO improve this error message. Should we check if at end
+  		# before calling parse_term, parse_factor, parse_expr etc?
+  		puts 'Error: Expected factor but was at end of tokens.'
+  		factor = nil
+  	end
+  	return factor
   end
   
 end                           
