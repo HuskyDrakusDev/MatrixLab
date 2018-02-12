@@ -39,16 +39,18 @@ class MatrixLabParser
   # ============================== OPERATION METHODS ===================================
 
   # Performs matrix addition and returns the result  
-  def matrix_add(a, b)
+  def matrix_add(a, b) #TODO issues with aliasing? (!!should be resolved now)
     # assumes valid input given, invalid stuff should be handled by parser methods
     # a and b must have the same dimensions and have only integer values,
     # or I guess floats could work
+    result = []
     for i in 0...a.length
-      for j in 0...a[0].length
-        b[i][j] += a[i][j]
+    	result.push []
+      for j in 0...a.first.length
+        result[i].push(b[i][j] + a[i][j])
       end
     end
-    return b
+    return result
   end
   
   # Performs matrix subtraction and returns the result
@@ -56,12 +58,31 @@ class MatrixLabParser
     # assumes valid input given, invalid stuff should be handled by parser methods
     # a and b must have the same dimensions and have only integer values,
     # or I guess floats could work
+    result = []
     for i in 0...a.length
-      for j in 0...a[0].length
-        b[i][j] -= a[i][j]
+    	result.push []
+      for j in 0...a.first.length
+        result[i].push b[i][j] - a[i][j]
       end
     end
-    return b
+    return result
+  end
+  
+  # Performs scalar matrix multiplication and returns the result
+  def scalar_mult(scalar, matrix)
+  	result = []
+  	for i in 0...matrix.length
+  		result.push []
+  		for j in 0...matrix.first.length
+  			result[i].push(matrix[i][j] * scalar)
+  		end
+  	end
+  	return result		
+  end
+
+	# Performs matrix multiplication and returns the result
+  def matrix_mult
+  
   end
 
   # Displays the given matrix to the standard out
