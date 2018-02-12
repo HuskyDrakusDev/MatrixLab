@@ -431,13 +431,52 @@ class MatrixLabParser
 			  	expr = nil
 			  end
 			end
+  	else
+  		puts 'Error Parsing Initial Term' #TODO this should be unnecessary too?
   	end
   	
   	return expr
   end
   
   def parse_term
-  	return @tokens.shift.to_i #TODO palceholder for parse term
+  
+  	term = parse_factor # parse a factor from the token string
+  	if not term.equal? nil
+  		while @tokens.first == '*'
+  			# loop until no more mult ops are found
+  			@tokens.shift # consume the '*' token
+  			if not end_token? @tokens.first
+  				# make sure there is a token to follow the mult op
+  				factor = parse_factor # parse the factor following the mult sign
+  				if not factor.equal? nil
+  					# make sure factor after operator was parsed correctly
+  					if factor.is_a? [].class
+  						if term.is_a? [].class
+  							# handle matrix multiplication
+  						else
+  							# handle scalar * matrix multiplication 
+  						end
+  					else
+  						if term.is_a? 1.class
+  							# handle scalar * scalar multiplication
+  							term *= factor
+  						else
+  							# handle matrix * scalar multiplication
+  						end
+  					end
+  				else
+  					puts 'Error parsing factor.'
+  					term = nil
+  				end
+  			else
+  				puts 'Error: Expected a factor to follow (*).'
+  				term = nil
+  			end
+  		end
+  	else 
+  		puts 'Error parsing initial factor.' #TODO necessary to print this here?
+  	end
+  	return term
   end
   
   def parse_factor
