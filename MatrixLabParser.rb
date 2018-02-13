@@ -481,8 +481,8 @@ class MatrixLabParser
           else
             puts 'Error: Extra characters after expression.'
           end
-        else
-          puts 'Error: Invalid Expression.'
+    #   else #TODO this case necessary?
+    #      puts 'Error: Invalid Expression.'
         end
       end
     else
@@ -559,7 +559,7 @@ class MatrixLabParser
 							end
 						end
 			  	else
-			  		puts 'Error Parsing Term' #TODO necessary to print here?
+			  #		puts 'Error Parsing Term' #TODO necessary to print here?
 			  		expr = nil
 			  	end
 			  else 
@@ -567,8 +567,8 @@ class MatrixLabParser
 			  	expr = nil
 			  end
 			end
-  	else
-  		puts 'Error Parsing Initial Term' #TODO this should be unnecessary too?
+ # 	else
+ # 		puts 'Error Parsing Initial Term' #TODO this should be unnecessary too?
   	end
   	
   	return expr
@@ -611,7 +611,7 @@ class MatrixLabParser
   						end
   					end
   				else
-  					puts 'Error parsing factor.'
+  				#	puts 'Error parsing factor.' TODO remove?
   					term = nil
   				end
   			else
