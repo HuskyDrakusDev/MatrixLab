@@ -39,7 +39,7 @@ class MatrixLabParser
   # ============================== OPERATION METHODS ===================================
 
   # Performs matrix addition and returns the result  
-  def matrix_add(a, b) #TODO issues with aliasing? (!!should be resolved now)
+  def matrix_add(a, b)
     # assumes valid input given, invalid stuff should be handled by parser methods
     # a and b must have the same dimensions and have only integer values,
     # or I guess floats could work
@@ -47,7 +47,7 @@ class MatrixLabParser
     for i in 0...a.length
     	result.push []
       for j in 0...a.first.length
-        result[i].push(b[i][j] + a[i][j])
+        result[i].push(a[i][j] + b[i][j])
       end
     end
     return result
@@ -62,7 +62,7 @@ class MatrixLabParser
     for i in 0...a.length
     	result.push []
       for j in 0...a.first.length
-        result[i].push b[i][j] - a[i][j]
+        result[i].push a[i][j] - b[i][j]
       end
     end
     return result
@@ -90,7 +90,7 @@ class MatrixLabParser
     for i in 0...m.length
       print '| '
       for j in 0...m[0].length
-        print m[i][j] + ' '
+        print m[i][j].to_s + ' '
       end
       puts '|'
     end
@@ -108,7 +108,7 @@ class MatrixLabParser
       if row.length == n
         for i in 0...row.length # iterate with i through the rows
           if integer? row[i]
-            row[i].to_i # convert to numbers from strings
+            row[i] = row[i].to_i # convert to numbers from strings
           else
             puts 'Error: Row entry contained non digit characters.'
             valid = false
@@ -116,7 +116,7 @@ class MatrixLabParser
           end
         end
       else
-        puts "Error: Row entry must have #{} columns."
+        puts "Error: Row entry must have #{n} columns."
         valid = false
       end
     else
@@ -131,6 +131,13 @@ class MatrixLabParser
     end
   end
   
+  def get_identity(n)
+  
+  end
+  
+  def get_zero(n)
+  
+  end
   
   # ============================== PARSING HELPER METHODS ==============================
 
@@ -235,17 +242,23 @@ class MatrixLabParser
         	if end_token? @tokens.first
         	  # display all currently saved matrices
         	  puts 'Currently Stored Matrices and Vectors:'
-            @matrices.each { |identifier, matrix|
-              puts "#{identifier} ="
-              disp_matrix matrix 
-              puts
-            }
+            if @matrices.length > 0
+              @matrices.each { |identifier, matrix|
+                puts "#{identifier} ="
+                disp_matrix matrix 
+                puts
+              }
+            else
+              puts 'None'
+            end
         	else
         		puts 'Error: ls command does not accept arguments.'
         	end
         elsif sysCommand == 'clr'
         	if end_token? @tokens.first
+        	  # clear the hash of identifiers to matrices
 	        	@matrices = {}
+	        	puts 'Stored matrices cleared.'
         	else
         		puts 'Error: clr command does not accept arguments.'
         	end
@@ -254,9 +267,10 @@ class MatrixLabParser
 	        	if user_identifier? @tokens.first
 	        		identifier = @tokens.shift # consume and store the user identifier
 			      	if end_token? @tokens.first
-		      			#TODO process rm command
 		      			if @matrices.key? identifier
+		      			  # if identifier is in the hash, delete it
 		      			  @matrices.delete identifier
+		      			  puts "#{identifier} removed."
 		      			else
 		      			  puts "Identifier #{identifier} is already available."
 		      			end
@@ -270,8 +284,8 @@ class MatrixLabParser
         		puts 'Error: Missing identifier argument.'
         	end
         else 
-        # should be a redundant case, because token had to have
-        # been in SYS_COMMAND_STRINGS
+          # should be a redundant case, because token had to have
+          # been in SYS_COMMAND_STRINGS
         	puts 'Error: Invalid system command (dev, this should not happen).'
         end
       elsif @tokens[1] == '='
@@ -289,12 +303,13 @@ class MatrixLabParser
                   # we must have an assignment command, with dimensions using a by or x
                   n = @tokens.shift.to_i
                   if end_token? @tokens.first
-										#TODO get user input 
-								    matrix = []
+								    matrix = [] # declare a new matrix 
 								    row_input_success = true
+  								  # get input row by row for new matrix
   								  for i in 0...m
   								    row = get_row n
   								    if not row.empty? 
+  								      # if row was valid
   								      matrix.push row
   								    else
   								      row_input_success = false
@@ -302,7 +317,9 @@ class MatrixLabParser
   								    end
 									  end  
 									  if row_input_success
+									    # only update hash if rows were entered correctly
   									  @matrices[identifier] = matrix
+  									  puts "Value of #{identifier} stored."
 									  end
                   else
                   	puts 'Error: Too many arguments for dimensions.'
@@ -316,11 +333,13 @@ class MatrixLabParser
                 n = @tokens.shift.to_i
                 if end_token? @tokens.first
 									#TODO get user input   
-									matrix = []
+									matrix = [] # declare a new matrix
 							    row_input_success = true
+							    # get input row by row for new matrix
 								  for i in 0...m
 								    row = get_row n
 								    if not row.empty? 
+								      # if row was valid
 								      matrix.push row
 								    else
 								      row_input_success = false
@@ -328,7 +347,9 @@ class MatrixLabParser
 								    end
 								  end  
 								  if row_input_success
+  								  # only update hash if rows were entered correctly
 									  @matrices[identifier] = matrix
+									  puts "Value of #{identifier} stored."
 								  end               
                 else
                 	puts 'Error: Too many arguments for dimensions.'
@@ -372,7 +393,23 @@ class MatrixLabParser
       else
         # case where just an expression was typed in
         expr = parse_expr #TODO expression but with extra garbage afterwards??
-        puts ">> #{expr}"        
+        if not expr.equal? nil
+          # if expression parsed correctly
+          if end_token? @tokens.first
+            if expr.is_a? [].class
+              # handle printing a matrix
+              puts '>>'
+              disp_matrix(expr)
+            else
+              # handle printing a scalar
+              puts ">> #{expr}"
+            end
+          else
+            puts 'Error: Extra characters after expression.'
+          end
+        else
+          puts 'Error: Invalid Expression.'
+        end
       end
     else
       puts 'Error: Command was empty (if this is happening, something is very broken)'
@@ -429,7 +466,7 @@ class MatrixLabParser
 									  # now that we are sure dimensions match, we can subtract term
 									  expr = matrix_subtract expr, term
 									else
-									  puts 'Error: Cannot add matrices with mismatched dimensions.'
+									  puts 'Error: Cannot subtract matrices with mismatched dimensions.'
 									  expr = nil
 									end
 								else
@@ -525,8 +562,60 @@ class MatrixLabParser
   		elsif unary_op? @tokens.first
   			op = @tokens.shift # consume and store the unary operator token
   			# TODO selection structure for unary ops
+  			if @tokens.first == '('
+  			  @tokens.shift # consume the '(' token
+  			  if not end_token? @tokens.first
+  			    expr = parse_expr
+  			    if not expr.equal? nil
+  			      if @tokens.first == ')'
+  			        # here, we have all the correct syntax and a valid expression parsed
+  			        if expr.is_a? [].class
+  			          # all unary ops are only valid on a matrix, not a scalar
+    			        if op == 'det'
+    			          # perform determinant operation on expression
+    			          # factor = det(expr)
+    			        elsif op == 'rref'
+    			          # perform gauss jordan elimination algorithm on matrix
+    			          # factor = rref(expr)
+    			        elsif op == 'inv'
+    			          # calculate inverse of matrix
+    			          # factor = inv(expr)
+    			        elsif op == 'trans'
+    			          # calculate transpose of a matrix
+    			          # factor = trans(expr)
+    			        else
+    			          puts 'Invalid unary operator (dev, this should not happen.)'
+    			          factor = nil
+    			        end
+  			        else
+  			          puts 'Error: Expected a matrix argument for unary operator.'
+                  factor = nil
+  			        end
+  			      else
+  			        puts "Error: Expected token ')' to match '('"
+  			      end
+  			    else
+  			      # TODO another one that we may not need later
+  			      puts 'Error parsing expression for unary operator.'
+  			      factor = nil
+  			    end
+  			  else
+        	  puts 'Error: Expected expression to follow unary operator.'
+        	  factor = nil
+  			  end
+  			else
+  			  puts "Error: Expected '(' to follow unary operator."
+  			  factor = nil
+  			end
   		elsif identifier? @tokens.first
-  			# TODO handle case where factor is just an identifier
+  			identifier = @tokens.shift # consume and store the identifier
+  			if @matrices.key? identifier
+  			  # if identifier is defined in the hash, set factor to its value
+  			  factor = @matrices[identifier]
+  			else
+  			  puts "Error: Undefined variable '#{identifier}'."
+  			  factor = nil
+  			end 
   		elsif integer? @tokens.first
   			# in this case, the factor is just an integer number
   			factor = @tokens.shift.to_i # consume the integer and store in factor
