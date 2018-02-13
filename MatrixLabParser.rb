@@ -101,6 +101,21 @@ class MatrixLabParser
     return result
   end
 
+	# compute and return the transpose of given matrix 
+	def transpose(matrix)
+		m = matrix.length
+		n = matrix.first.length
+		result = []
+		for col in 0...n
+			result.push []
+			for row in 0...m
+				result[col].push matrix[row][col]
+			end
+		end
+		
+		return result
+	end
+
   # Displays the given matrix to the standard out
   def disp_matrix(m)
     for i in 0...m.length
@@ -615,6 +630,7 @@ class MatrixLabParser
   			    expr = parse_expr
   			    if not expr.equal? nil
   			      if @tokens.first == ')'
+  			      	@tokens.shift # consume the closing parenthesis
   			        # here, we have all the correct syntax and a valid expression parsed
   			        if expr.is_a? [].class
   			          # all unary ops are only valid on a matrix, not a scalar
@@ -630,6 +646,7 @@ class MatrixLabParser
     			        elsif op == 'trans'
     			          # calculate transpose of a matrix
     			          # factor = trans(expr)
+    			          factor = transpose expr
     			        else
     			          puts 'Invalid unary operator (dev, this should not happen.)'
     			          factor = nil
