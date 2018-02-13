@@ -131,12 +131,33 @@ class MatrixLabParser
     end
   end
   
+  # return a new n x n identity matrix
   def get_identity(n)
-  
+    m = []
+    for i in 0...n
+      row = []
+      for j in 0...n
+        row.push 0
+      end
+      row[i] = 1
+      m.push row
+    end
+    
+    return m
   end
   
+  # return a new n x n zero matrix
   def get_zero(n)
-  
+    m = []
+    for i in 0...n
+      row = []
+      for j in 0...n
+        row.push 0
+      end
+      m.push row
+    end
+    
+    return m
   end
   
   # ============================== PARSING HELPER METHODS ==============================
@@ -205,12 +226,15 @@ class MatrixLabParser
     reserved = false
     if token.start_with? 'I', 'Z'
       if token.length >= 2
-        for i in 1...token.length
-          if DIGITS.include? token[i]
-            reserved = true
-          else
-            reserved = false
-            break
+        if not token[1] == 0
+          # reserved identifier's number should not start with a zero
+          for i in 1...token.length
+            if DIGITS.include? token[i]
+              reserved = true
+            else
+              reserved = false
+              break
+            end
           end
         end
       end
