@@ -226,7 +226,7 @@ class MatrixLabParser
     reserved = false
     if token.start_with? 'I', 'Z'
       if token.length >= 2
-        if not token[1] == 0
+        if not token[1] == '0'
           # reserved identifier's number should not start with a zero
           for i in 1...token.length
             if DIGITS.include? token[i]
@@ -268,9 +268,12 @@ class MatrixLabParser
         	  puts 'Currently Stored Matrices and Vectors:'
             if @matrices.length > 0
               @matrices.each { |identifier, matrix|
-                puts "#{identifier} ="
-                disp_matrix matrix 
-                puts
+                # print all matrices in hash except for cached identities and zeroes
+                if not reserved_identifier? identifier
+                  puts "#{identifier} ="
+                  disp_matrix matrix 
+                  puts
+                end
               }
             else
               puts 'None'
@@ -636,6 +639,18 @@ class MatrixLabParser
   			if @matrices.key? identifier
   			  # if identifier is defined in the hash, set factor to its value
   			  factor = @matrices[identifier]
+  			elsif reserved_identifier? identifier
+  			  # if user entered a reserved identifier and it was not in the hash
+ 			    n = identifier[1..-1].to_i # grab the numerical part of the identifier
+  			  if identifier.start_with? 'I'
+  			    # handle new identity matrix
+  			    matrix = get_identity n
+  			  else
+  			    # handle new zero matrix
+  			    matrix = get_zero n
+  			  end
+  			  factor = matrix
+  			  @matrices[identifier] = matrix
   			else
   			  puts "Error: Undefined variable '#{identifier}'."
   			  factor = nil
