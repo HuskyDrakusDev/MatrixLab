@@ -1,8 +1,12 @@
 # Class to parse and process commands for Matrix Lab system.
 
-require 'set'
+require 'set' #TODO is this used anymore? 
+require_relative 'MatrixLabFileHandler.rb'
 
 # ================================ CONSTANTS ===========================================
+
+# the file name of the save data file
+SAVEFILE = 'MLsave_data'
 
 # the maximum dimension allowed for a matrix in the system
 MAX_DIMENSION = 100
@@ -27,7 +31,10 @@ RESERVED_PREFIXES = SYS_COMMAND_STRINGS + ['I', 'Z']
 class MatrixLabParser
 
   def initialize
-    
+
+    # file handler object to save and load the hash of matrices
+    @filehandler = MatrixLabFileHandler.new SAVEFILE
+
     # hash to map identifiers to matrices    
     @matrices = {}
     
