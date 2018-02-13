@@ -588,8 +588,15 @@ class MatrixLabParser
   					# make sure factor after operator was parsed correctly
   					if factor.is_a? [].class
   						if term.is_a? [].class
-  							# TODO handle matrix multiplication (check dimensions)
-  							term = matrix_mult term, factor
+  							# handle matrix multiplication
+  							dim1 = term.first.length
+  							dim2 = factor.length
+  							if dim1 == dim2
+  								term = matrix_mult term, factor
+  							else
+  								puts 'Error: Matrix multiplication requires valid dimensions.'
+		  						term = nil
+  							end
   						else
   							# handle scalar * matrix multiplication (term is scalar)
   							term = scalar_mult term, factor
@@ -612,8 +619,8 @@ class MatrixLabParser
   				term = nil
   			end
   		end
-  	else 
-  		puts 'Error parsing initial factor.' #TODO necessary to print this here?
+#  	else 
+#  		puts 'Error parsing initial factor.' #TODO necessary to print this here?
   	end
   	return term
   end
