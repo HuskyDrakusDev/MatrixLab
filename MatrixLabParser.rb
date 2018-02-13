@@ -419,34 +419,46 @@ class MatrixLabParser
               else
                 # must be assignment from expression
                 expr = parse_expr
-                if expr.is_a? [].class 
-  	            	# type checking for an Array.
-	                # Ruby doesnt like this but its necessary
-                  @matrices[identifier] = expr
-                else
-                  puts 'Error: Cannot assign a scalar value to a variable.'
+                if not expr.equal? nil
+	                # if expression was valid
+		              if expr.is_a? [].class 
+			            	# type checking for an Array.
+			              # Ruby doesnt like this but its necessary
+		                @matrices[identifier] = expr
+		                puts "Value of #{identifier} stored."
+		              else
+		                puts 'Error: Cannot assign a scalar value to a variable.'
+		              end
                 end
               end
             else 
               # must be assignment from expression
               expr = parse_expr
-              if expr.is_a? [].class 
-              	# type checking for an Array.
-                # Ruby doesnt like this but its necessary
-                @matrices[identifier] = expr
-              else
-                puts 'Error: Cannot assign a scalar value to a variable.'
+              if not expr.equal? nil
+								# if expression was valid              
+		            if expr.is_a? [].class 
+		            	# type checking for an Array.
+		              # Ruby doesnt like this but its necessary
+		              @matrices[identifier] = expr
+		              puts "Value of #{identifier} stored."
+		            else
+		              puts 'Error: Cannot assign a scalar value to a variable.'
+		            end
               end
             end
           else
             # must be assignment from expression
             expr = parse_expr
-            if expr.is_a? [].class 
-            	# type checking for an Array.
-              # Ruby doesnt like this but its necessary
-              @matrices[identifier] = expr
-            else
-              puts 'Error: Cannot assign a scalar value to a variable.'
+            if not expr.equal? nil
+							# if expression was valid            
+		          if expr.is_a? [].class 
+		          	# type checking for an Array.
+		            # Ruby doesnt like this but its necessary
+		            @matrices[identifier] = expr
+		            puts "Value of #{identifier} stored."
+		          else
+		            puts 'Error: Cannot assign a scalar value to a variable.'
+		          end
             end
           end
         else
@@ -454,7 +466,7 @@ class MatrixLabParser
         end 
       else
         # case where just an expression was typed in
-        expr = parse_expr #TODO expression but with extra garbage afterwards??
+        expr = parse_expr
         if not expr.equal? nil
           # if expression parsed correctly
           if end_token? @tokens.first
