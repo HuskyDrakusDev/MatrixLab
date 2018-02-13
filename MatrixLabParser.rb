@@ -81,8 +81,24 @@ class MatrixLabParser
   end
 
 	# Performs matrix multiplication and returns the result
-  def matrix_mult
+  def matrix_mult(a, b)
   
+    m = a.length # num rows in resulting matrix
+    p = b.length # inner dimension, which must be equivalent to a.first.length
+    n = b.first.length # num cols in resulting matrix
+    
+    result = []
+    for row in 0...m
+      result.push []
+      for col in 0...n
+        val = 0
+        for i in 0...p
+          val += a[row][i] * b[i][col]
+        end
+        result[row].push val
+      end
+    end
+    return result
   end
 
   # Displays the given matrix to the standard out
@@ -192,11 +208,12 @@ class MatrixLabParser
     return isInt
   end
   
+  # return true iff token is a string representing a positive integer ( > 0 )
   def positive_integer?(token)
-    return (integer? token and token[0] != '-')
+    return (integer? token and token.to_i > 0)
   end
   
-  def user_identifier?(token)
+  def user_identifier?(token) #TODO this thing possibly thinks @ is an identifier??
     isUserIdentifier = true
     if token.length > 0
       RESERVED_PREFIXES.each { |prefix| 
@@ -266,16 +283,19 @@ class MatrixLabParser
         	if end_token? @tokens.first
         	  # display all currently saved matrices
         	  puts 'Currently Stored Matrices and Vectors:'
-            if @matrices.length > 0
-              @matrices.each { |identifier, matrix|
-                # print all matrices in hash except for cached identities and zeroes
-                if not reserved_identifier? identifier
-                  puts "#{identifier} ="
-                  disp_matrix matrix 
-                  puts
-                end
-              }
-            else
+        	  printed_a_val = false
+            @matrices.each { |identifier, matrix|
+              # print all matrices in hash except for cached identities and zeroes
+              if not reserved_identifier? identifier
+                puts "#{identifier} ="
+                disp_matrix matrix 
+                puts
+                printed_a_val = true
+              end
+            }
+            if not printed_a_val
+              # print None if not matrices from the hash were displayed
+              # this is just so that the user knows the command worked
               puts 'None'
             end
         	else
@@ -541,7 +561,7 @@ class MatrixLabParser
   					# make sure factor after operator was parsed correctly
   					if factor.is_a? [].class
   						if term.is_a? [].class
-  							# TODO handle matrix multiplication
+  							# TODO handle matrix multiplication (check dimensions)
   							term = matrix_mult term, factor
   						else
   							# handle scalar * matrix multiplication (term is scalar)
