@@ -17,7 +17,6 @@ def quit_command?(str)
   return (str == 'q' or str == 'quit' or str == 'exit')
 end
 
-
 # Initialize Program
 
 # parser object to process the command
@@ -26,12 +25,15 @@ parser.load_library # load any defined matrices from the save file
 # display welcome message
 puts "Matrix Lab v#{version_num}"
 
+
+
 # main program loop
 while run
   
-    # get a command from the user
+    # get a command from the user and tokenize it
     print prompt + ' '
-    com = gets.chomp.split
+    com = gets.chomp.scan /\(|\)|\+|\-|\*|[A-Za-z0-9]+/
+    
     
     if com.length > 0 
       # flag to end main loop, if quit or exit command entered
