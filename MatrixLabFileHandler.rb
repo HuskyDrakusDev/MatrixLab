@@ -10,13 +10,16 @@ class MatrixLabFileHandler
 		@parser = parser
 	end
 
+	# read a row of matrix input from the savefile
   def read_row(savefile)
-    valid = true
+    valid = true # flag to keep track of valid input
     
+    # read a line from the file
     row = savefile.readline.chomp
     
+    # make sure line wasn't a blank line, if it was we will return []
     if row.length > 0
-      row = row.split
+      row = row.split # split the row into separate tokens
       
       # remove pipe characters if present, these are optional
       if row.first == '|'
@@ -28,14 +31,14 @@ class MatrixLabFileHandler
       
       # process digit values of row
       if row.length > 0
-        # after removing pipe characters if present, must check length again
+        # after removing pipe characters (if present), must check length again
         for i in 0...row.length # iterate with i through the row
           if @parser.integer? row[i]
             row[i] = row[i].to_i # convert to numbers from strings
           else
             print 'Load Error: Row entry contained non digit characters '
             valid = false
-            break # break from the loop
+            break # break from the loop because of invalid input
           end
         end
       else
@@ -138,12 +141,14 @@ class MatrixLabFileHandler
 	  
 	  savefile.close
 	  
-	  if success
-  	  return matrices
-  	else
+	  if not success
     	puts 'Aborting savefile load...'
-  	  return {}
   	end
+  	
+  	# should be safe to return this even after an abort.
+  	# This way, any matrices that were successfully entered in the
+  	# file will still be loaded.
+	  return matrices 
 	end
 	
 	# save the given hash into the file
