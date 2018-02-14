@@ -2,7 +2,7 @@
 require_relative 'MatrixLabParser.rb'
 
 # current version
-version_num = '0.0.2'
+version_num = '0.1.1'
 
 # the symbol to display as a prompt
 prompt = '%'
@@ -22,7 +22,7 @@ end
 
 # parser object to process the command
 parser = MatrixLabParser.new
-
+parser.load_library # load any defined matrices from the save file
 # display welcome message
 puts "Matrix Lab v#{version_num}"
 
@@ -36,6 +36,7 @@ while run
     if com.length > 0 
       # flag to end main loop, if quit or exit command entered
       if quit_command?(com[0])
+        parser.save_library # save any defined matrices into the save file
         run = false
       else
         # attempt to parse and process the command

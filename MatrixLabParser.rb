@@ -33,7 +33,7 @@ class MatrixLabParser
   def initialize
 
     # file handler object to save and load the hash of matrices
-    @filehandler = MatrixLabFileHandler.new SAVEFILE
+    @filehandler = MatrixLabFileHandler.new SAVEFILE, self
 
     # hash to map identifiers to matrices    
     @matrices = {}
@@ -41,6 +41,16 @@ class MatrixLabParser
     # array of tokens
     @tokens = []
   
+  end
+  
+  # ============================== LOAD/SAVE METHODS ===================================
+  
+  def load_library
+    @matrices = @filehandler.load_hash
+  end
+  
+  def save_library
+    @filehandler.save_hash @matrices
   end
   
   # ============================== OPERATION METHODS ===================================
