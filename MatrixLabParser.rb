@@ -576,7 +576,6 @@ class MatrixLabParser
 							end
 						end
 			  	else
-			  #		puts 'Error Parsing Term' #TODO necessary to print here?
 			  		expr = nil
 			  	end
 			  else 
@@ -584,8 +583,6 @@ class MatrixLabParser
 			  	expr = nil
 			  end
 			end
- # 	else
- # 		puts 'Error Parsing Initial Term' #TODO this should be unnecessary too?
   	end
   	
   	return expr
@@ -628,7 +625,6 @@ class MatrixLabParser
   						end
   					end
   				else
-  				#	puts 'Error parsing factor.' TODO remove?
   					term = nil
   				end
   			else
@@ -636,8 +632,6 @@ class MatrixLabParser
   				term = nil
   			end
   		end
-#  	else 
-#  		puts 'Error parsing initial factor.' #TODO necessary to print this here?
   	end
   	return term
   end
