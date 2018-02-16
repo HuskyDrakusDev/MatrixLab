@@ -132,6 +132,30 @@ class MatrixLabParser
 		
 		return result
 	end
+	
+	# calculates the determinant of given minor matrix, using (m)
+	# as the base matrix and considering the minor defined by the
+	# valid rows (vr) and calid columns (vc) of (m) 
+	def determinant(m, vr, vc)
+		result = 0
+		n = vr.length # square dimension of the matrix minor
+		if n == 1
+			result = m[vr.first][vc.first]
+		elsif n == 2
+			result = m[vr[0]][vc[0]] * m[vr[1]][vc[1]] - m[vr[0]][vc[1]] * m[vr[1]][vc[0]]
+		else
+			row = vr.shift
+			for k in 0...vc.length
+				col = vc.delete_at(k)
+				if m[row][col] != 0
+					result += ((-1)**k) * m[row][col] * determinant(m, vr, vc)
+				end
+				vc.insert(k, col)
+			end
+			vr.unshift row
+		end
+		return result
+	end
 
   # Displays the given matrix to the standard out
   def disp_matrix(m)
@@ -664,9 +688,12 @@ class MatrixLabParser
   			        # here, we have all the correct syntax and a valid expression parsed
   			        if expr.is_a? [].class
   			          # all unary ops are only valid on a matrix, not a scalar
+  			          # TODO finish implementation of unary ops
     			        if op == 'det'
     			          # perform determinant operation on expression
-    			          # factor = det(expr)
+    			          validrows = (0...expr.length).to_a
+    			          validcols = (0...expr.first.length).to_a
+    			          factor = determinant(expr, validrows, validcols)
     			        elsif op == 'rref'
     			          # perform gauss jordan elimination algorithm on matrix
     			          # factor = rref(expr)
