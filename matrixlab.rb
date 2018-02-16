@@ -32,7 +32,7 @@ while run
   
     # get a command from the user and tokenize it
     print prompt + ' '
-    com = gets.chomp.scan /\(|\)|\+|\-|\*|\=|[A-Za-z0-9]+/
+    com = gets.chomp.scan /\(|\)|\+|\-|\*|\=|[A-Za-z0-9]+|.+/
     
     
     if com.length > 0 

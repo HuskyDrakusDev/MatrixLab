@@ -661,8 +661,6 @@ class MatrixLabParser
   end
   
   def parse_factor
-  	#TODO with tokenizer, maybe it should be improved so that we don't have to have
-  	# example: det ( A ) and instead can have det(A)
   	factor = nil
   	if not end_token? @tokens.first
   		if @tokens.first == '('
